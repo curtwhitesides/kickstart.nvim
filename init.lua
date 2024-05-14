@@ -57,33 +57,8 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
   'tpope/vim-sleuth',
+  'bullets-vim/bullets.vim',
   { 'numToStr/Comment.nvim', opts = {} },
-  { 'bullets-vim/bullets.vim' },
-  {
-    'nvim-neo-tree/neo-tree.nvim',
-    branch = 'v3.x',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-tree/nvim-web-devicons',
-      'MunifTanjim/nui.nvim',
-    },
-    config = function()
-      vim.keymap.set('n', '<C-n>', ':Neotree toggle<Cr>', { desc = 'Toggle [N]eo tree' })
-    end,
-  },
-  {
-    'lewis6991/gitsigns.nvim',
-    opts = {
-      signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-      },
-    },
-  },
-
   {
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
@@ -412,12 +387,15 @@ require('lazy').setup({
       },
       indent = { enable = true, disable = { 'ruby' } },
     },
-    config = function(_, opts)
+    config = function(_)
       require('nvim-treesitter.install').prefer_git = true
     end,
   },
 
   require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.gitsigns',
 }, {
   ui = {
     icons = vim.g.have_nerd_font and {} or {
