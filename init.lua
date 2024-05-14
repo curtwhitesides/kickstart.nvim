@@ -61,8 +61,8 @@ require('lazy').setup({
   { 'numToStr/Comment.nvim', opts = {} },
   {
     'folke/which-key.nvim',
-    event = 'VimEnter', -- Sets the loading event to 'VimEnter'
-    config = function() -- This is the function that runs, AFTER loading
+    event = 'VimEnter',
+    config = function()
       require('which-key').setup()
 
       require('which-key').register {
@@ -74,14 +74,13 @@ require('lazy').setup({
         ['<leader>t'] = { name = '[T]oggle', _ = 'which_key_ignore' },
         ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
       }
-      -- visual mode
       require('which-key').register({
         ['<leader>h'] = { 'Git [H]unk' },
       }, { mode = 'v' })
     end,
   },
 
-  { -- Fuzzy Finder (files, lsp, etc)
+  {
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
     branch = '0.1.x',
@@ -106,11 +105,9 @@ require('lazy').setup({
         },
       }
 
-      -- Enable Telescope extensions if they are installed
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
 
-      -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
@@ -146,8 +143,7 @@ require('lazy').setup({
   {
     'neovim/nvim-lspconfig',
     dependencies = {
-      -- Automatically install LSPs and related tools to stdpath for Neovim
-      { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
+      { 'williamboman/mason.nvim', config = true },
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
@@ -196,10 +192,6 @@ require('lazy').setup({
             })
           end
 
-          -- The following autocommand is used to enable inlay hints in your
-          -- code, if the language server you are using supports them
-          --
-          -- This may be unwanted, since they displace some of your code
           if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
             map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
@@ -281,7 +273,7 @@ require('lazy').setup({
     },
   },
 
-  { -- Autocompletion
+  {
     'hrsh7th/nvim-cmp',
     event = 'InsertEnter',
     dependencies = {
@@ -322,11 +314,8 @@ require('lazy').setup({
           ['<C-n>'] = cmp.mapping.select_next_item(),
           ['<C-p>'] = cmp.mapping.select_prev_item(),
           ['<Tab>'] = cmp.mapping.confirm { select = true },
-
-          -- Scroll the documentation window [b]ack / [f]orward
           ['<C-b>'] = cmp.mapping.scroll_docs(-4),
           ['<C-f>'] = cmp.mapping.scroll_docs(4),
-
           ['<C-Space>'] = cmp.mapping.complete {},
 
           ['<C-l>'] = cmp.mapping(function()
@@ -334,6 +323,7 @@ require('lazy').setup({
               luasnip.expand_or_jump()
             end
           end, { 'i', 's' }),
+
           ['<C-h>'] = cmp.mapping(function()
             if luasnip.locally_jumpable(-1) then
               luasnip.jump(-1)
@@ -379,7 +369,6 @@ require('lazy').setup({
     build = ':TSUpdate',
     opts = {
       ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' },
-      -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
         enable = true,
@@ -387,14 +376,16 @@ require('lazy').setup({
       },
       indent = { enable = true, disable = { 'ruby' } },
     },
-    config = function(_)
+    config = function(_, opts)
       require('nvim-treesitter.install').prefer_git = true
+      ---@diagnostic disable-next-line: missing-fields
+      require('nvim-treesitter.configs').setup(opts)
     end,
   },
 
+  require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.lint',
   require 'kickstart.plugins.neo-tree',
-  require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.gitsigns',
 }, {
   ui = {
